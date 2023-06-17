@@ -1,0 +1,81 @@
+Overview
+This guide will walk you through the process of operating a Taiko node via simple-taiko-node(opens in a new tab). You will be able to:
+
+Run a Taiko node easily from the command line on Windows, Mac, and Linux.
+View a Grafana(opens in a new tab) dashboard which displays the node's status.
+Prerequisites
+Docker(opens in a new tab) is installed and running.
+Git(opens in a new tab) is installed.
+Consult the Geth minimum hardware requirements(opens in a new tab), with the exception of 1TB of free space (~50GB should be more than enough initially, but over time it could become insufficient as the chain grows).
+Steps
+Clone simple-taiko-node
+git clone https://github.com/taikoxyz/simple-taiko-node.git
+cd simple-taiko-node
+
+Configure your node (required)
+First, copy the .env.sample to a new file .env:
+
+cp .env.sample .env
+
+Next, open the .env file in your preferred text editor:
+
+nano .env
+
+Finally, set the following environment variables:
+
+L1_ENDPOINT_HTTP
+L1_ENDPOINT_WS
+You can get a Sepolia L1 endpoint from a few places, but it must point to an archive node to access the state trie beyond the last 128 blocks. Alchemy(opens in a new tab) and Infura(opens in a new tab) are two popular RPC providers. Make sure you select the RPC as Sepolia testnet, and not Ethereum mainnet.
+
+Enable your node as a proposer (optional)
+See enable a proposer for more information.
+
+Enable your node as a prover (optional)
+See enable a prover for more information.
+
+Start a node
+If you ran a testnet node previously make sure to first run a docker compose down -v to remove the old volumes. Also, it may take some time to synchronize from the genesis block. You can monitor this progress through logs, or in the local grafana dashboard and see the latest L2 chain status in the Taiko block explorer(opens in a new tab).
+
+Make sure Docker is running and then run the following command to start the node. If you want to run it in the background, please add the -d flag (docker compose up -d).
+
+docker compose up
+
+To run the node in the background (detached mode), use the -d flag:
+
+docker compose up -d
+
+Stop a node
+This command shuts down the node, but will keep all volumes, so next time you restart the node, it won't need to synchronize from the genesis again.
+
+docker compose down
+
+Remove a node
+These commands will completely remove the node by removing all volumes used by each container:
+
+docker compose down -v
+rm -f .env
+
+Update a node
+Update the simple-taiko-node Docker images:
+
+docker compose pull
+
+View the node's logs
+To view the Docker logs, the following commands can be ran:
+
+View all logs
+docker compose logs -f
+
+View the proposer image's logs
+docker compose logs -f taiko_client_proposer
+
+View the prover image's logs
+docker compose logs -f taiko_client_prover_relayer
+
+View the L2 execution engine logs
+docker compose logs -f l2_execution_engine
+
+View the live data streams of your running containers
+This shows the CPU/MEM USAGE % and consumption of your machine's resources (add prefix "docker stats -a" to display all containers)
+
+docker stats
